@@ -96,51 +96,18 @@ public class Main {
                 int groupPosition;
                 TutorialGroup selectedGroup;
                 int teamPosition;
+                int studentPosition;
                 Team team;
                 Team selectedTeam;
+                String createMore;
+                Student selectedtStudent;
+                boolean validProgramSelection;
+                program = null;
+
                 do {
                     subChoice = registerTeamUI.displayControls();
                     switch (subChoice) {
                         case 1:
-                            //Set assignment team size 
-                            boolean validProgramSelection = false;
-                            //Programme 
-                            program = null;
-
-                            // Loop until the user selects a valid program
-                            while (!validProgramSelection) {
-                                // 1. List all programmes
-                                System.out.println(" ");
-                                for (int i = 0; i < programmeList.size(); i++) {
-                                    System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
-                                }
-
-                                // 2. Select the programme
-                                int programPosition = -1;
-                                try {
-                                    System.out.print("\nEnter the program number to set team size: ");
-                                    programPosition = scanner.nextInt();
-
-                                    if (programPosition < 1 || programPosition > programmeList.size()) {
-                                        throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
-                                    }
-
-                                    // Retrieve the selected program
-                                    program = programmeList.get(programPosition - 1);
-                                    validProgramSelection = true;
-                                } catch (InputMismatchException e) {
-                                    System.out.println("\nInvalid input. Please enter a valid number.");
-                                    scanner.nextLine(); // Consume the invalid input
-                                }
-                            }
-
-                            //Read and set team size 
-                            registerTeamUI.readTeamSizeInput(scanner, teams, program);
-
-                            // Set team size for all teams related to the selected program
-                            //ManageTutorialTeam.setTeamSizeForProgram(teams, program, min, max);
-                            break;
-                        case 2:
                             //Create Team 
                             //1. List all programme 
                             boolean createMoreTeams = true;
@@ -176,42 +143,35 @@ public class Main {
                                         System.out.println(e.getMessage());
                                     }
                                 }
-                                //3. List all tutorial groups of the selected programme 
-                                System.out.println("\nTutorial Groups for " + program.getProgrammeName() + ":");
-                                //ListInterface<TutorialGroup> 
-                                tutorialGroups = program.getTutorialGroup();
-                                for (int i = 0; i < tutorialGroups.size(); i++) {
-                                    TutorialGroup tutorialGroup = tutorialGroups.get(i);
-                                    System.out.println((i + 1) + ". " + tutorialGroup.getGroupName());
-                                }
 
-                                //4. Select a tutorial group to create team 
-                                System.out.print("\nSelect the group to create the assignment team: ");
+                                //Read and set team size 
+                                registerTeamUI.readTeamSizeInput(scanner, teams, program);
 
-                                groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups);
+                                //3. List all tutorial groups and select one 
+                                //***Use YK version***
+                                groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups, program);
                                 selectedGroup = tutorialGroups.get(groupPosition - 1);
 
-                                System.out.print("Enter the number of teams you want to create: ");
-                                int numTeams = scanner.nextInt();
-                                scanner.nextLine(); // Consume newline
+                                //Create teams 
+                                registerTeamUI.createTeams(scanner, teams, selectedGroup, program);
 
-                                for (int i = 0; i < numTeams; i++) {
-                                    Team newTeam = registerTeamUI.enterTeamDetails(scanner);
-                                    ManageTutorialTeam.createTeam(teams, newTeam, selectedGroup);
+                                while (true) {
+                                    System.out.print("\nDo you want to create teams for another tutorial group? (yes/no): ");
+                                    createMore = scanner.nextLine().toLowerCase();
+                                    if (createMore.equals("yes") || createMore.equals("no")) {
+                                        break; // Break out of the loop if valid input is provided
+                                    } else {
+                                        System.out.println("Invalid input. Please enter 'yes' or 'no'.");
+                                    }
                                 }
 
-                                System.out.print("Do you want to create teams for another tutorial group? (yes/no): ");
-                                String createMore = scanner.nextLine().toLowerCase();
-
-                                if (!createMore.equals("yes")) {
+                                if (createMore.equals("no")) {
                                     createMoreTeams = false;
                                 }
                             }
-
-                            //registerTeamUI.createTeams(tutorialGroups, teams);
                             break;
 
-                        case 3:
+                        case 2:
                             //Remove team 
                             //1. List all programme 
                             validProgramSelection = false;
@@ -228,7 +188,7 @@ public class Main {
                                 // 2. Select the programme
                                 int programPosition = -1;
                                 try {
-                                    System.out.print("\nEnter the program number to create team: ");
+                                    System.out.print("\nEnter the program number to remove team: ");
                                     programPosition = scanner.nextInt();
 
                                     if (programPosition < 1 || programPosition > programmeList.size()) {
@@ -246,32 +206,20 @@ public class Main {
                                 }
                             }
                             //3. List all tutorial groups of the selected programme 
-                            System.out.println("\nTutorial Groups for " + program.getProgrammeName() + ":");
-                            //ListInterface<TutorialGroup> 
-                            tutorialGroups = program.getTutorialGroup();
-                            for (int i = 0; i < tutorialGroups.size(); i++) {
-                                TutorialGroup tutorialGroup = tutorialGroups.get(i);
-                                System.out.println((i + 1) + ". " + tutorialGroup.getGroupName());
-                            }
-
-                            //4. Select the tutorial group for the team that will be removed 
-                            System.out.print("\nSelect the group to remove assignment team: ");
-
-                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups);
+                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups, program);
                             selectedGroup = tutorialGroups.get(groupPosition - 1);
 
-                            //5. List all teams of that tutorial group 
-                            ManageTutorialTeam.listAssignmentTeams(teams, selectedGroup);
+                            //List all teams and get the team position
+                            teamPosition = registerTeamUI.readTeamPositionInput(scanner, teams, selectedGroup);
 
-                            //6. Select a team to be removed
-                            System.out.println("Select a team to be removed: ");
-                            teamPosition = scanner.nextInt();
-
-                            ManageTutorialTeam.removeTeamFromGroup(teams, selectedGroup, teamPosition);
+                            //If there are team in the array 
+                            if (teamPosition != -1) {
+                                ManageTutorialTeam.removeTeamFromGroup(teams, selectedGroup, teamPosition);
+                            }
 
                             break;
 
-                        case 4:
+                        case 3:
                             //Amend team details 
                             //1. List all programme 
                             validProgramSelection = false;
@@ -306,46 +254,25 @@ public class Main {
                                 }
                             }
                             //3. List all tutorial groups of the selected programme 
-                            System.out.println("\nTutorial Groups for " + program.getProgrammeName() + ":");
-                            //ListInterface<TutorialGroup> 
-                            tutorialGroups = program.getTutorialGroup();
-                            for (int i = 0; i < tutorialGroups.size(); i++) {
-                                TutorialGroup tutorialGroup = tutorialGroups.get(i);
-                                System.out.println((i + 1) + ". " + tutorialGroup.getGroupName());
-                            }
-
-                            //4. Select the tutorial group for the team that will be removed 
-                            System.out.print("\nSelect the group to remove assignment team: ");
-
-                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups);
+                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups, program);
                             selectedGroup = tutorialGroups.get(groupPosition - 1);
 
-                            //5. List all teams of that tutorial group 
-                            ManageTutorialTeam.listAssignmentTeams(teams, selectedGroup);
+                            //Select a team (if no team = -1)
+                            teamPosition = registerTeamUI.readTeamPositionInput(scanner, teams, selectedGroup);
 
-                            //6. Select a team to be updated
-                            System.out.println("Select a team to update: ");
-                            teamPosition = scanner.nextInt();
-
-                            team = ManageTutorialTeam.getTeamByPosition(teams, selectedGroup, teamPosition);
-
-                            scanner.nextLine();
-
-                            System.out.print("\nEnter Team ID: ");
-                            String teamId = scanner.nextLine();
-                            scanner.nextLine(); // Consume the newline character
-                            System.out.print("\nEnter Team Name: ");
-                            String teamName = scanner.nextLine();
-
-                            team.setTeamId(teamId);
-                            team.setTeamName(teamName);
-
+                            //If there are team in the array 
+                            if (teamPosition != -1) {
+                                //Know which team object
+                                team = ManageTutorialTeam.getTeamByPosition(teams, selectedGroup, teamPosition);
+                                team.amendTeamDetails(scanner, team);
+                            }
                             break;
 
-                        case 5:
+                        case 4:
                             //Add student 
                             //1. List all programme 
                             validProgramSelection = false;
+                            Student selectedStudent;
                             program = null;
 
                             // Loop until the user selects a valid program
@@ -359,7 +286,7 @@ public class Main {
                                 // 2. Select the programme
                                 int programPosition = -1;
                                 try {
-                                    System.out.print("\nEnter the program number to create team: ");
+                                    System.out.print("\nEnter the program number to add student: ");
                                     programPosition = scanner.nextInt();
 
                                     if (programPosition < 1 || programPosition > programmeList.size()) {
@@ -377,46 +304,25 @@ public class Main {
                                 }
                             }
                             //3. List all tutorial groups of the selected programme 
-                            System.out.println("\nTutorial Groups for " + program.getProgrammeName() + ":");
-                            //ListInterface<TutorialGroup> 
-                            tutorialGroups = program.getTutorialGroup();
-                            for (int i = 0; i < tutorialGroups.size(); i++) {
-                                TutorialGroup tutorialGroup = tutorialGroups.get(i);
-                                System.out.println((i + 1) + ". " + tutorialGroup.getGroupName());
-                            }
-
-                            //4. Select the tutorial group to add student 
-                            System.out.print("\nSelect the group to add student: ");
-
-                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups);
+                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups, program);
                             selectedGroup = tutorialGroups.get(groupPosition - 1);
 
-                            //5. List all students of that tutorial group 
-                            students = selectedGroup.listStudents();
-                            for (int i = 0; i < students.size(); i++) {
-                                Student student = students.get(i);
-                                System.out.println((i + 1) + ". " + student.getName());
+                            //List and select a student of the tutorial group
+                            selectedStudent = registerTeamUI.selectStudentFromGroup(scanner, selectedGroup);
+                            //If the tutorial group got student 
+                            if (selectedStudent != null) {
+                                teamPosition = registerTeamUI.readTeamPositionInput(scanner, teams, selectedGroup);
+                                //if there are teams in the tutorial group
+                                if (teamPosition != - 1) {
+                                    selectedTeam = teams.get(teamPosition - 1);
+                                    ManageStudentTeam.addStudentToTeam(selectedStudent, selectedTeam);
+                                    System.out.println("Maximum student:" + selectedTeam.getMaxStudents());
+
+                                }
                             }
-
-                            //6. Select the student to add 
-                            System.out.print("\nSelect the student: ");
-                            int studentPosition = scanner.nextInt();
-                            Student selectedStudent = students.get(studentPosition - 1);
-
-                            //7. List all teams of that tutorial group 
-                            ManageTutorialTeam.listAssignmentTeams(teams, selectedGroup);
-
-                            //8. Select a team to add the student 
-                            System.out.println("Select the team to add student: ");
-                            teamPosition = scanner.nextInt();
-                            selectedTeam = teams.get(teamPosition - 1);
-
-                            //9. Add the student into the team 
-                            ManageStudentTeam.addStudentToTeam(selectedStudent, selectedTeam);
-                            System.out.println("Student added to the team successfully.");
                             break;
 
-                        case 6:
+                        case 5:
                             //Remove student from team 
                             //1. List all programme 
                             validProgramSelection = false;
@@ -451,43 +357,176 @@ public class Main {
                                 }
                             }
                             //3. List all tutorial groups of the selected programme 
-                            System.out.println("\nTutorial Groups for " + program.getProgrammeName() + ":");
-                            //ListInterface<TutorialGroup> 
-                            tutorialGroups = program.getTutorialGroup();
-                            for (int i = 0; i < tutorialGroups.size(); i++) {
-                                TutorialGroup tutorialGroup = tutorialGroups.get(i);
-                                System.out.println((i + 1) + ". " + tutorialGroup.getGroupName());
-                            }
-
-                            //4. Select the tutorial group 
-                            System.out.print("\nSelect the group to remove student: ");
-
-                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups);
+                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups, program);
                             selectedGroup = tutorialGroups.get(groupPosition - 1);
 
-                            //5. List all teams of that tutorial group 
-                            ManageTutorialTeam.listAssignmentTeams(teams, selectedGroup);
+                            //5. List all teams and select a team 
+                            teamPosition = registerTeamUI.readTeamPositionInput(scanner, teams, selectedGroup);
+                            //If there are team in the tutorial group
+                            if (teamPosition != -1) {
+                                selectedTeam = teams.get(teamPosition - 1);
+                                if (selectedTeam.getTeamMembers().isEmpty()) {
+                                    System.out.println("\nCurrently no students available for " + selectedTeam.getTeamName());
+                                } else {
+                                    System.out.println("Students for " + selectedTeam.getTeamName() + ":");
+                                    Iterator<Student> iterator = selectedTeam.getTeamMembers().getIterator();
+                                    while (iterator.hasNext()) {
+                                        Student student = iterator.next();
+                                        System.out.println(student);
+                                    }
+                                }
+//                                //7. List all students of the selected team 
+//                                ManageStudentTeam.listTeamStudents(selectedTeam);
+                                //8. Select student to be removed 
+                                System.out.print("Select the student to be removed: ");
+                                studentPosition = scanner.nextInt();
+                                if (studentPosition != -1) {
+                                    //9.Removed student from the team
+                                    Student studentToRemove = selectedTeam.getTeamMembers().get(studentPosition - 1);
+                                    ManageStudentTeam.removeStudentFromTeam(studentToRemove, selectedTeam, studentPosition);
+                                    System.out.println("Student removed from the team successfully.");
+                                }
+                            }
 
-                            //6. Select a team to list students 
-                            System.out.println("Select the team to remove student: ");
-                            teamPosition = scanner.nextInt();
-                            selectedTeam = teams.get(teamPosition - 1);
-
-                            //7. List all students of the selected team 
-                            ManageStudentTeam.listTeamStudents(students, selectedTeam);
-
-                            //8. Select student to be removed 
-                            System.out.print("Select the student to be removed: ");
-                            studentPosition = scanner.nextInt();
-
-                            //9.Removed student from the team
-                            Student studentToRemove = selectedTeam.getStudents().get(studentPosition - 1);
-                            ManageStudentTeam.removeStudentFromTeam(studentToRemove, selectedTeam, studentPosition);
-                            System.out.println("Student removed from the team successfully.");
-                            
                             break;
 
-                        case 8:
+                        case 6:
+                            //Merge Teams 
+                            validProgramSelection = false;
+                            program = null;
+
+                            // Loop until the user selects a valid program
+                            while (!validProgramSelection) {
+                                // List all programmes
+                                System.out.println(" ");
+                                for (int i = 0; i < programmeList.size(); i++) {
+                                    System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
+                                }
+
+                                // 2. Select the programme
+                                int programPosition = -1;
+                                try {
+                                    System.out.print("\nEnter the program number to remove team: ");
+                                    programPosition = scanner.nextInt();
+
+                                    if (programPosition < 1 || programPosition > programmeList.size()) {
+                                        throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
+                                    }
+
+                                    // Retrieve the selected program
+                                    program = programmeList.get(programPosition - 1);
+                                    validProgramSelection = true;
+                                } catch (InputMismatchException e) {
+                                    System.out.println("\nInvalid input. Please enter a valid number.");
+                                    scanner.nextLine(); // Consume the invalid input
+                                } catch (IllegalArgumentException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+                            //3. List all tutorial groups and select a group
+                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups, program);
+                            selectedGroup = tutorialGroups.get(groupPosition - 1);
+
+                            //List all teams and select 2 teams 
+                            if (teams.size() < 2) {
+                                System.out.println("\nNumber of team insufficient, unable to merge teams.");
+                            } else {
+                                // Check if there are at least two teams that can be merged
+                                boolean canMerge = false;
+                                for (int i = 0; i < teams.size() - 1; i++) {
+                                    for (int j = i + 1; j < teams.size(); j++) {
+                                        Team team1 = teams.get(i);
+                                        Team team2 = teams.get(j);
+                                        int combinedSize = team1.getTeamMembers().size() + team2.getTeamMembers().size();
+                                        if (combinedSize <= program.getMaxStudents()) {
+                                            canMerge = true;
+                                            break;
+                                        }
+                                    }
+                                    if (canMerge) {
+                                        break;
+                                    }
+                                }
+
+                                if (!canMerge) {
+                                    System.out.println("Cannot merge teams. No suitable pairs found or combined size exceeds maximum team size.");
+                                    break;
+                                } else {
+                                    System.out.println("\nTeams for " + selectedGroup.getGroupName() + ":");
+                                    for (int i = 0; i < teams.size(); i++) {
+                                        team = teams.get(i);
+                                        System.out.println((i + 1) + ". " + team + " current size: " + team.getTeamMembers().size() + " max size: " + team.getMaxStudents());
+                                        // List all the students in the team
+                                        ManageStudentTeam.listTeamStudents(team);
+                                    }
+
+                                    int team1Position = -1;
+                                    int team2Position = -1;
+
+                                    while (true) {
+                                        System.out.print("\nSelect 2 teams to be merged: ");
+                                        System.out.print("\nSelect team 1 : ");
+                                        team1Position = scanner.nextInt();
+                                        scanner.nextLine(); // Consume newline
+                                        System.out.print("\nSelect team 2 : ");
+                                        team2Position = scanner.nextInt();
+                                        scanner.nextLine(); // Consume newline
+
+                                        if (team1Position < 1 || team1Position > teams.size() || team2Position < 1 || team2Position > teams.size()) {
+                                            System.out.println("Invalid input. Team positions are out of range. Please select again.");
+                                            continue;
+                                        } else if (team1Position == team2Position) {
+                                            System.out.println("Invalid input. Team positions cannot be the same. Please select again.");
+                                            continue;
+                                            //if the combined size is larger than the max size 
+                                        } else if (((teams.get(team1Position - 1).getTeamMembers().size()) + (teams.get(team2Position - 1).getTeamMembers().size())) > program.getMaxStudents()) {
+                                            System.out.println("The size of the merged team exceeds the maximum. Please select again.");
+                                            continue;
+                                        } else {
+                                            break; // Break out of the loop if all conditions are fulfilled
+                                        }
+                                    }
+
+                                    Team selectedTeam1 = teams.get(team1Position - 1);
+                                    Team selectedTeam2 = teams.get(team2Position - 1);
+
+                                    Team newTeam = registerTeamUI.enterTeamDetails(scanner);
+
+                                    // Merge the new team with the selected teams
+                                    newTeam.getTeamMembers().mergeLists(selectedTeam1.getTeamMembers());
+                                    newTeam.getTeamMembers().mergeLists(selectedTeam2.getTeamMembers());
+
+                                    // Get the iterator for the new team's team members
+//                                    Iterator<Student> iterator = newTeam.getTeamMembers().getIterator();
+//
+//                                    // Iterate through the team members using the iterator
+//                                    while (iterator.hasNext()) {
+//                                        Student student = iterator.next();
+//                                        student.setTeam(newTeam);
+//                                    }
+                                    if (team1Position < team2Position) {
+                                        // Remove team 1 & team 2
+                                        ManageTutorialTeam.removeTeamFromGroup(teams, selectedGroup, team1Position);
+                                        //Minus 1 because the 1st have been removed, position have been changed
+                                        ManageTutorialTeam.removeTeamFromGroup(teams, selectedGroup, team2Position - 1);
+                                    } else {
+                                        ManageTutorialTeam.removeTeamFromGroup(teams, selectedGroup, team1Position);
+                                        ManageTutorialTeam.removeTeamFromGroup(teams, selectedGroup, team2Position);
+                                    }
+
+                                    ManageTutorialTeam.createTeam(teams, newTeam, selectedGroup, program.getMaxStudents());
+
+                                    for (int i = 0; i < newTeam.getTeamMembers().size(); i++) {
+                                        Student student = newTeam.getTeamMembers().get(i);
+                                        student.setTeam(newTeam);
+                                        System.out.println("Team for student " + student + " is " + student.getTeam());
+                                    }
+                                }
+                            }
+
+                            break;
+
+                        case 7:
                             //List assignment teams for a tutorial group
                             //1. List all programme 
                             validProgramSelection = false;
@@ -522,24 +561,14 @@ public class Main {
                                 }
                             }
                             //3. List all tutorial groups of the selected programme 
-                            System.out.println("\nTutorial Groups for " + program.getProgrammeName() + ":");
-                            //ListInterface<TutorialGroup> 
-                            tutorialGroups = program.getTutorialGroup();
-                            for (int i = 0; i < tutorialGroups.size(); i++) {
-                                TutorialGroup tutorialGroup = tutorialGroups.get(i);
-                                System.out.println((i + 1) + ". " + tutorialGroup.getGroupName());
-                            }
-
-                            //4. Select a tutorial group to list team
-                            System.out.print("\nSelect the group to list team: ");
-
-                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups);
+                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups, program);
                             selectedGroup = tutorialGroups.get(groupPosition - 1);
 
+                            //List assignment teams 
                             ManageTutorialTeam.listAssignmentTeams(teams, selectedGroup);
                             break;
 
-                        case 9:
+                        case 8:
                             //List all students of a team
                             //1. List all programme 
                             validProgramSelection = false;
@@ -556,7 +585,7 @@ public class Main {
                                 // 2. Select the programme
                                 int programPosition = -1;
                                 try {
-                                    System.out.print("\nEnter the program number to create team: ");
+                                    System.out.print("\nEnter the program number to list students: ");
                                     programPosition = scanner.nextInt();
 
                                     if (programPosition < 1 || programPosition > programmeList.size()) {
@@ -574,36 +603,22 @@ public class Main {
                                 }
                             }
                             //3. List all tutorial groups of the selected programme 
-                            System.out.println("\nTutorial Groups for " + program.getProgrammeName() + ":");
-                            //ListInterface<TutorialGroup> 
-                            tutorialGroups = program.getTutorialGroup();
-                            for (int i = 0; i < tutorialGroups.size(); i++) {
-                                TutorialGroup tutorialGroup = tutorialGroups.get(i);
-                                System.out.println((i + 1) + ". " + tutorialGroup.getGroupName());
-                            }
-
-                            //4. Select the tutorial group 
-                            System.out.print("\nSelect the group to add student: ");
-
-                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups);
+                            groupPosition = registerTeamUI.readGroupPositionInput(scanner, tutorialGroups, program);
                             selectedGroup = tutorialGroups.get(groupPosition - 1);
 
-                            //5. List all teams of that tutorial group 
-                            ManageTutorialTeam.listAssignmentTeams(teams, selectedGroup);
+                            teamPosition = registerTeamUI.readTeamPositionInput(scanner, teams, selectedGroup);
 
-                            //6. Select a team to list students 
-                            System.out.println("Select a team to list student: ");
-                            teamPosition = scanner.nextInt();
-                            selectedTeam = teams.get(teamPosition - 1);
-
-                            //7. List all students of the selected team 
-                            ManageStudentTeam.listTeamStudents(students, selectedTeam);
+                            if (teamPosition != -1) {
+                                selectedTeam = teams.get(teamPosition - 1);
+                                ManageStudentTeam.listTeamStudents(selectedTeam);
+                            }
 
                             break;
 
-                        case 10:
+                        case 11:
                             System.out.println("Exiting...");
                             break;
+
                         default:
                             System.out.println("Functionality not implemented yet.");
                     }
