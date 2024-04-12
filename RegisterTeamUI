@@ -1,0 +1,398 @@
+package Boundary;
+
+import adt.ArrayList;
+import adt.ListInterface;
+import control.ManageStudentTeam;
+import control.ManageTutorialTeam;
+import entity.Programme;
+import entity.Student;
+import entity.Team;
+import entity.TutorialGroup;
+import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.Scanner;
+
+/**
+ *
+ * @author OSCAR KOH YUNG QIN
+ */
+public class RegisterTeamUI {
+
+    ManageTutorialTeam manageTeam = new ManageTutorialTeam();
+    ManageStudentTeam manageStudent = new ManageStudentTeam();
+
+    private Scanner scanner;
+
+    public RegisterTeamUI(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    public void createTeams(Scanner scanner, ListInterface<Team> teams, TutorialGroup selectedGroup, Programme program) {
+        while (true) {
+            try {
+                System.out.print("\nEnter the number of teams you want to create: ");
+                int numTeams = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                if (numTeams <= 0) {
+                    System.out.println("Please enter a number greater than zero.");
+                    continue; // Restart the loop to prompt for input again
+                }
+
+                for (int i = 0; i < numTeams; i++) {
+                    try {
+                        Team newTeam = enterTeamDetails(scanner);
+                        ManageTutorialTeam.createTeam(teams, newTeam, selectedGroup, program.getMaxStudents());
+                    } catch (Exception e) {
+                        System.out.println("Error creating team: " + e.getMessage());
+                    }
+                }
+                break; // Break out of the loop if input and team creation are successful
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input for number of teams. Please enter an integer.");
+                scanner.nextLine(); // Consume the invalid input
+            }
+        }
+    }
+
+    public Team enterTeamDetails(Scanner scanner) {
+        System.out.print("\nEnter Team ID: ");
+        String teamId = scanner.nextLine();
+        System.out.print("Enter Team Name: ");
+        String teamName = scanner.nextLine();
+
+        return new Team(teamId, teamName);
+    }
+
+    public Student selectStudentFromGroup(Scanner scanner, TutorialGroup selectedGroup) {
+        ListInterface<Student> groupStudents = selectedGroup.listStudents();
+
+        if (groupStudents.isEmpty()) {
+            System.out.println("No students available for " + selectedGroup.getGroupName());
+            return null;
+        }
+
+        ListInterface<Student> eligibleStudents = new ArrayList<>();
+        System.out.println("Students for " + selectedGroup.getGroupName() + ":");
+        int counter = 1;
+        for (int i = 0; i < groupStudents.size(); i++) {
+            Student student = groupStudents.get(i);
+            // Only list students that do not have a team
+            if (student.getTeam() == null) {
+                System.out.println((counter) + ". " + student.getName());
+                //Create an array to store the students list viewed to the user 
+                eligibleStudents.add(student);
+                counter++;
+            }
+        }
+
+        int studentIndex = -1;
+        while (studentIndex < 1 || studentIndex > eligibleStudents.size()) {
+            try {
+                System.out.print("\nSelect the student: ");
+                studentIndex = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                if (studentIndex < 1 || studentIndex > eligibleStudents.size()) {
+                    System.out.println("Invalid input. Please enter a number between 1 and " + eligibleStudents.size() + ".");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                scanner.nextLine(); // Consume the invalid input
+            }
+        }
+
+        return eligibleStudents.get(studentIndex - 1);
+    }
+
+    public int readTeamPositionInput(Scanner scanner, ListInterface<Team> teams, TutorialGroup selectedGroup) {
+        int teamPosition = -1;
+
+        if (teams.isEmpty()) {
+            System.out.println("\nCurrently no teams available for " + selectedGroup.getGroupName());
+            return teamPosition;
+        }
+
+        while (teamPosition < 1 || teamPosition > teams.size()) {
+            System.out.println("\nTeams for " + selectedGroup.getGroupName() + ":");
+            for (int i = 0; i < teams.size(); i++) {
+                Team team = teams.get(i);
+                System.out.println((i + 1) + ". " + team);
+            }
+
+            try {
+                System.out.print("\nSelect a team: ");
+                teamPosition = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                if (teamPosition < 1 || teamPosition > teams.size()) {
+                    System.out.println("Invalid input. Please enter a number between 1 and " + teams.size() + ".");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                scanner.nextLine(); // Consume the invalid input
+            }
+        }
+
+        return teamPosition;
+    }
+
+    //***Use YK***
+    public int readGroupPositionInput(Scanner scanner, ListInterface<TutorialGroup> tutorialGroups, Programme program) {
+        int groupPosition = -1;
+
+        while (groupPosition < 1 || groupPosition > tutorialGroups.size()) {
+            System.out.println("\nTutorial Groups for " + program.getProgrammeName() + ":");
+            for (int i = 0; i < tutorialGroups.size(); i++) {
+                TutorialGroup tutorialGroup = tutorialGroups.get(i);
+                System.out.println((i + 1) + ". " + tutorialGroup.getGroupName());
+            }
+
+            try {
+                System.out.print("\nSelect a group: ");
+                groupPosition = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                if (groupPosition < 1 || groupPosition > tutorialGroups.size()) {
+                    System.out.println("Invalid input. Please enter a number between 1 and " + tutorialGroups.size() + ".");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                scanner.nextLine(); // Consume the invalid input
+            }
+        }
+
+        return groupPosition;
+    }
+
+// UI class
+    public void readTeamSizeInput(Scanner scanner, ListInterface<Team> teams, Programme program) {
+        // Check if the maximum team size for the program is already set
+        if (program.getMaxStudents() == -1) {
+            int max = -1;
+            boolean validSizeInput = false;
+
+            // Loop until the user enters valid size inputs
+            while (!validSizeInput) {
+                try {
+                    System.out.print("Enter maximum team size for program " + program.getProgrammeName() + ": ");
+                    max = scanner.nextInt();
+                    validSizeInput = true; // Set to true to exit the loop if input is valid
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input. Please enter valid numbers.");
+                    scanner.nextLine(); // Consume the invalid input
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            program.setMaxStudents(max);
+        } else {
+            System.out.println("Maximum team size for " + program.getProgrammeName() + " is already set.");
+        }
+    }
+
+    public int displayControls() {
+        int choice = -1;
+        while (choice < 1 || choice > 10) {
+            System.out.println("\nAssignment Team Management ");
+            System.out.println("1. Create teams");
+            System.out.println("2. Remove team");
+            System.out.println("3. Amend team details");
+            System.out.println("4. Add students to teams");
+            System.out.println("5. Remove students from teams");
+            System.out.println("6. Merge teams");
+            System.out.println("7. List teams");
+            System.out.println("8. List students under a team");
+            System.out.println("9. Teams summary report for tutorial groups");
+            System.out.println("10. Students summary report for teams");
+            System.out.println("11. Exit");
+            System.out.print("\nEnter a selection (1 - 11): ");
+            try {
+                choice = scanner.nextInt();
+                if (choice < 1 || choice > 10) {
+                    System.out.println("Invalid choice. Please enter a number between 1 and 10.\n");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                scanner.nextLine(); // Consume the invalid input
+            }
+        }
+        return choice;
+    }
+
+//    public void createTeams(ListInterface<TutorialGroup> tutorialGroups, ListInterface<Team> teams) {
+//        int totalTeamsCreated = 0;
+//        String createMoreTeams;
+//        do {
+//            int groupPosition = -1;
+//            while (groupPosition < 1 || groupPosition > tutorialGroups.size()) {
+//                System.out.println("\nCurrent tutorial group list:");
+//                int counter = 0;
+//                Iterator<TutorialGroup> tutorialGroupIterator = tutorialGroups.getIterator();
+//                while (tutorialGroupIterator.hasNext()) {
+//                    TutorialGroup tutorialGroup = tutorialGroupIterator.next();
+//                    System.out.println((counter + 1) + ". " + tutorialGroup.getGroupName());
+//                    counter++;
+//                }
+//                System.out.print("\nSelect the group to create the assignment team: ");
+//                try {
+//                    groupPosition = scanner.nextInt();
+//                    scanner.nextLine(); // Consume newline
+//                    if (groupPosition < 1 || groupPosition > tutorialGroups.size()) {
+//                        System.out.println("Invalid input. Please enter a number between 1 and " + tutorialGroups.size() + ".");
+//                    }
+//                } catch (InputMismatchException e) {
+//                    System.out.println("Invalid input. Please enter a valid number.");
+//                    scanner.nextLine(); // Consume the invalid input
+//                }
+//            }
+//            TutorialGroup selectedGroup = tutorialGroups.get(groupPosition - 1);
+//
+//            System.out.print("Enter Team ID: ");
+//            String teamId = scanner.nextLine();
+//            System.out.print("Enter Team Name: ");
+//            String teamName = scanner.nextLine();
+//            // Create teams for a tutorial group 
+//            manageTeam.createTeam(teams, new Team(teamId, teamName), selectedGroup);
+//
+//            totalTeamsCreated++;
+//
+//            System.out.print("Would you like to create more teams? (Y/N): ");
+//            createMoreTeams = scanner.nextLine();
+//        } while (createMoreTeams.equalsIgnoreCase("Y"));
+//
+//        // Display action summary
+//        System.out.println("\nAction Summary:");
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("Total Teams Created: " + totalTeamsCreated);
+//        System.out.println("\nTeam Created Details:");
+//        Iterator<Team> teamIterator = teams.getIterator();
+//        while (teamIterator.hasNext()) {
+//            Team team = teamIterator.next();
+//            System.out.println("Team ID: " + team.getTeamId() + ", Team Name: " + team.getTeamName() + ", Tutorial Group: " + team.getTutorialGroup().getGroupName());
+//        }
+//        System.out.println("--------------------------------------------------");
+//    }
+//    public void listTeamsByTutorialGroup(ListInterface<TutorialGroup> tutorialGroups, ListInterface<Team> teams) {
+//        // Display tutorial groups
+//        System.out.println("\nList of Tutorial Groups:");
+//        int counter = 1;
+//        Iterator<TutorialGroup> listTutorialGroupIterator = tutorialGroups.getIterator();
+//        while (listTutorialGroupIterator.hasNext()) {
+//            TutorialGroup tutorialGroup = listTutorialGroupIterator.next();
+//            System.out.println((counter + 1) + ". " + tutorialGroup.getGroupName());
+//            counter++;
+//        }
+//
+//        // Prompt user to select a tutorial group
+//        System.out.print("\nEnter the number of the tutorial group to view its teams (1 - " + tutorialGroups.size() + "): ");
+//        int selectedGroupNumber = -1;
+//        try {
+//            selectedGroupNumber = scanner.nextInt();
+//            if (selectedGroupNumber < 1 || selectedGroupNumber > tutorialGroups.size()) {
+//                System.out.println("Invalid selection. Please enter a number within the range.");
+//                return;
+//            }
+//        } catch (InputMismatchException e) {
+//            System.out.println("Invalid input. Please enter a valid number.");
+//            scanner.nextLine(); // Consume the invalid input
+//            return;
+//        }
+//
+//        // Get the selected tutorial group
+//        TutorialGroup selectedGroup = tutorialGroups.get(selectedGroupNumber - 1);
+//
+//        // List assignment teams for a tutorial group
+//        manageTeam.listAssignmentTeams(teams, selectedGroup);
+//    }
+//    public void start() {
+//            switch (choice) {
+//                case 11:
+//                    //Set assignment team size 
+//                    //1. List all course
+//                    //2. Select the course (to set their assignment team size)
+//                    //3. Set the minimum and maximum team size 
+//                
+//                case 1:
+//                    //Create assignment team for a tutorial group 
+    //1. List all programme 
+    //2. Select a programme 
+//                    //3. List all tutorial groups for that programme 
+//                    //4. Select the tutorial group to create team 
+//                    //5. Min and maximum size for a team
+//                    //6. Insert id and name for each team 
+//                    //7. Will you like to create more team? (Y/N)
+//                    //8. Action Summary -> Which tutorial group, how many teams created, name and id 
+//                    //9. Press enter and back to the menu 
+//                    break;
+//                case 2:
+//                    //Remove assignment team
+//                    //1. List all tutorial groups
+//                    //2. Select the tutorial group to remove team
+//                    //3. List all team
+//                    //4. Select the team to be remove 
+//                    //5. Will you like to remove more team? (Y/N)
+//                    //6. Action Summary -> Which tutorial group, how many teams have been removed, name and id 
+//                    //7. Press enter and back to the menu 
+//                    break;
+//                case 3:
+//                    //Amend assignment team details
+//                    //1. List all tutorial groups
+//                    //2. Select the tutorial group to have the team to be amend
+//                    //3. List all team
+//                    //4. Select the team to be amend
+//                    //5. Insert the new id and name 
+//                    //6. Will you like to amend more team? (Y/N)
+//                    //7. Action Summary -> Which tutorial group, how many teams have been amend, old & new name and old & new id 
+//                    //8. Press enter and back to the menu 
+//                    break;
+//                case 4:
+//                    //Add student to team 
+//                    //1. Enter student details
+//                    //2. Find the tutorial group of that student  
+//                    //3. List all team in that tutorial group
+//                    //4. Select the team to add the student 
+//                    //5. Will you like to add more student? (Y/N)
+//                    //6. Action Summary
+//                    //7. Press enter and back to the menu 
+//                    break;
+//                case 5:
+//                    //Remove students from team
+//                    //1. Enter student details
+//                    //2. Find the tutorial group of that student 
+//                    //3. Find the team of that student 
+//                    //4. Remove the student from the team
+//                    //5. Will you like to add more student? (Y/N)
+//                    //6. Action Summary
+//                    //7. Press enter and back to the menu 
+//                    break;
+//                case 6:
+//                    //Merge team based on criteria
+//
+//                    break;
+//                case 7:
+//                    //List assignment teams for a tutorial group
+//                    //1. List all tutorial groups
+//                    //2. Select the tutorial group 
+//                    //3. List all team
+//                    //4. Press enter and back to the menu 
+//                    break;
+//                case 8:
+//                    //List students under an ssignment team 
+//                    //1. List all tutorial groups
+//                    //2. Select the tutorial group 
+//                    //3. List all team
+//                    //4. Select the team
+//                    //5. List all students 
+//                    //6. Press  enter, and back to the menu 
+//                    break;
+//                case 9:
+//                    System.out.println("Exiting...");
+//                    System.exit(0);
+//                    break;
+//                default:
+//                    System.out.println("Functionality not implemented yet.");
+//            }
+//        }
+//    }
+}
