@@ -1,0 +1,193 @@
+package control;
+
+import Boundary.TeamManagementUI;
+import static Boundary.TeamManagementUI.createTeam;
+import entity.Team;
+import entity.TutorialGroup;
+import entity.Student;
+import adt.ArrayList;
+import adt.ListInterface;
+import entity.Course;
+import entity.Programme;
+import java.util.Iterator;
+import java.util.Scanner;
+
+public class ManageTutorialTeam {
+    
+    public static void createTeam(Team team, TutorialGroup tutorialGroup, Course course) {
+        team.setTutorialGroup(tutorialGroup);
+        team.setCourse(course);
+        tutorialGroup.getTeamLists().add(team);
+        course.getTeamLists().add(team);
+    }
+
+    public static void removeTeam(Team teamToRemoved, TutorialGroup tutorialGroup, Course course) {
+        //Remove students from the team
+        for (int i = 0; i < teamToRemoved.getTeamMembers().size(); i++) {
+            Student student = teamToRemoved.getTeamMembers().get(i);
+            student.setTeam(null);
+        }
+
+        //Remove the team from the tutorial group
+        for (int j = 0; j < tutorialGroup.getTeamLists().size(); j++) {
+            if (tutorialGroup.getTeamLists().get(j).equals(teamToRemoved)) {
+                tutorialGroup.getTeamLists().remove(j);
+            }
+        }
+
+        //Remove the team from the related course 
+        for (int k = 0; k < course.getTeamLists().size(); k++) {
+            if (course.getTeamLists().get(k).equals(teamToRemoved)) {
+                course.getTeamLists().remove(k);
+            }
+        }
+
+    }
+
+//    public static void removeTeam(TutorialGroup group, int teamPosition) {
+//        // Adjust position to index
+//        int index = teamPosition - 1;
+//
+//        // Check if the index is valid
+//        if (index >= 0 && index < group.getTeams().size()) {
+//            Team teamToRemove = group.getTeams().get(index);
+//            if (teamToRemove.getTutorialGroup().equals(group)) {
+//                // Remove the team from the group
+//                group.getTeams().remove(index);
+//                System.out.println("Team removed successfully.");
+//
+//                // Remove team reference from all team members
+//                ListInterface<Student> students = teamToRemove.getTeamMembers();
+//                for (int i = 0; i < students.size(); i++) {
+//                    Student student = students.get(i);
+//                    student.setTeam(null);
+//                }
+//            } else {
+//                System.out.println("The selected team does not belong to the specified group.");
+//            }
+//        } else {
+//            System.out.println("Invalid team position.");
+//        }
+//    }
+//    public static Team getTeamByPosition(ListInterface<Team> teams, TutorialGroup selectedGroup, int position) {
+//        // Adjust position to index
+//        int index = position - 1;
+//
+//        // Filter teams based on the selected group
+//        ListInterface<Team> groupTeams = new ArrayList<>();
+//        for (int i = 0; i < teams.size(); i++) {
+//            Team team = teams.get(i);
+//            if (team.getTutorialGroup().equals(selectedGroup)) {
+//                groupTeams.add(team);
+//            }
+//        }
+//
+//        // Check if the index is within bounds
+//        if (index >= 0 && index < groupTeams.size()) {
+//            return groupTeams.get(index);
+//        } else {
+//            throw new IllegalArgumentException("Invalid team position.");
+//        }
+//    }
+    public static void listTeams(TutorialGroup selectedGroup) {
+        if (selectedGroup.getTeamLists().isEmpty()) {
+            System.out.println("\nCurrently no teams for " + selectedGroup.getGroupName());
+        } else {
+            System.out.println("Teams for each course in " + selectedGroup.getGroupName());
+
+            //List out all the course of the group
+            for (int i = 0; i < selectedGroup.getCourseLists().size(); i++) {
+                Course course = selectedGroup.getCourseLists().get(i);
+                System.out.println(course.getName());
+                //list out all the teams of the course
+                for (int j = 0; j < course.getTeamLists().size(); j++) {
+                    System.out.println(course.getTeamLists().get(j));
+                }
+            }
+        }
+
+//        int count = 1;
+//        if (tutorialGroup.getTeams().isEmpty()) {
+//            System.out.println("\nCurrently no teams available for " + tutorialGroup.getGroupName());
+//        } else {
+//            System.out.println("\nTeams for " + tutorialGroup.getGroupName() + ":");
+//            Iterator<Team> iterator = tutorialGroup.getTeams().getIterator();
+//            while (iterator.hasNext()) {
+//                Team team = iterator.next();
+//                if (team.getTutorialGroup().equals(tutorialGroup)) {
+//                    System.out.println(count + ". " + team);
+//                    count++;
+//                }
+//            }
+//        }
+    }
+
+//    public static void setTeamSizeForProgram(ListInterface<Team> teams, Programme program, int minSize, int maxSize) {
+//        Iterator<Team> iterator = teams.getIterator();
+//        while (iterator.hasNext()) {
+//            Team team = iterator.next();
+//            if (team.getTutorialGroup().getProgramme().equals(program)) {
+//                team.setMinStudents(minSize);
+//                team.setMaxStudents(maxSize);
+//            }
+//        }
+//    }
+    //An array call "teams" that have a list of "Team" object
+    public static void mergeTeams(int team1Position, int team2Position, Course selectedCourse, Scanner scanner, TutorialGroup selectedGroup) {
+        Team selectedTeam1 = selectedCourse.getTeamLists().get(team1Position - 1);
+        Team selectedTeam2 = selectedCourse.getTeamLists().get(team2Position - 1);
+
+        //Create a new team to store the merged team
+        Team newTeam = TeamManagementUI.createTeam(scanner);
+
+        // Merge the new team with the selected teams
+        newTeam.getTeamMembers().mergeLists(selectedTeam1.getTeamMembers());
+        newTeam.getTeamMembers().mergeLists(selectedTeam2.getTeamMembers());
+        
+        removeTeam(selectedTeam1, selectedGroup, selectedCourse);
+        removeTeam(selectedTeam2, selectedGroup, selectedCourse);
+        
+        createTeam(newTeam, selectedGroup, selectedCourse);
+    }
+//
+//    public void mergeTeams(ListInterface<Team> teams) {
+//        //loop through the "teams" array
+//        for (int i = 0; i < teams.size(); i++) {
+//
+//            //Obtains the first object inside the array and use it to create an object name "currentTeam"
+//            Team currentTeam = teams.get(i);
+//
+//            //Obtains all the students in the "currentTeam" and use it to create an array call "currentStudents"
+//            ListInterface<Student> currentStudents = currentTeam.getTutorialGroup().listStudents();
+//
+//            //list how many student in the assignment team
+//            int currentSize = currentStudents.size();
+//
+//            //If the number of student < the minimum 
+//            if (currentSize < minStudents) {
+//                // Find another team to merge with
+//                for (int j = 0; j < teams.size(); j++) {
+//                    if (i != j) {
+//
+//                        // Obtains the second object inside the array 
+//                        Team mergeTeam = teams.get(j);
+//
+//                        //Obtains all the students in that team and use it to create an array
+//                        ListInterface<Student> mergeStudents = mergeTeam.getTutorialGroup().listStudents();
+//
+//                        //Calculate how many student in that assignment team 
+//                        int mergeSize = mergeStudents.size();
+//
+//                        // Merge teams if the mergeTeam size is within range
+//                        if (mergeSize + currentSize <= maxStudents) {
+//                            // Merge students
+//                            currentStudents.mergeLists(mergeStudents);
+//                            teams.remove(j + 1);
+//                            break; // Exit the loop after merging
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+}
