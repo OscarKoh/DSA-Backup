@@ -1,0 +1,72 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package entity;
+
+import adt.ArrayList;
+import adt.ListInterface;
+import entity.Student;
+import java.io.Serializable;
+import java.util.Scanner;
+
+public class Team implements Serializable {
+
+    private String teamId;
+    private String teamName;
+    private TutorialGroup tutorialGroup;
+    private ListInterface<Student> studentLists;
+    private Course course;
+
+    public Team(String teamId, String teamName) {
+        this.teamId = teamId;
+        this.teamName = teamName;
+        this.studentLists = new ArrayList<>();
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
+    }
+
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void amendTeamDetails(String newTeamId, String newTeamName) {
+        this.teamId = newTeamId;
+        this.teamName = newTeamName;
+    }
+
+    public void setTutorialGroup(TutorialGroup tutorialGroup) {
+        this.tutorialGroup = tutorialGroup;
+    }
+
+    public TutorialGroup getTutorialGroup() {
+        return tutorialGroup;
+    }
+
+    public ListInterface<Student> getTeamMembers() {
+        return studentLists;
+    }
+
+    @Override
+    public String toString() {
+        return "Team ID: " + teamId + ", Team Name: " + teamName;
+    }
+}
