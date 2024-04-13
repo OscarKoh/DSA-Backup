@@ -1,0 +1,45 @@
+package control;
+
+import adt.ArrayList;
+import adt.ListInterface;
+import entity.Programme;
+import entity.Student;
+import entity.Team;
+import java.util.Iterator;
+
+/**
+ *
+ * @author Oscar Koh Yung Qin
+ */
+public class ManageStudentTeam {
+
+    public static void addStudentToTeam(Student student, Team team) {
+        if (team.getTeamMembers().size() >= team.getCourse().getTeamSize()) {
+            System.out.println("Cannot add student. Team has reached maximum size.");
+        } else {
+            student.setTeam(team);
+            team.getTeamMembers().add(student); // Add the student to the team's student list
+            System.out.println("Student added to the team successfully.");
+        }
+    }
+
+    public static void removeStudentFromTeam(Student student, Team team, int studentPosition) {
+        student.setTeam(null); // Remove the team reference from the student
+        team.getTeamMembers().remove(studentPosition - 1); // Remove the student from the team's student list
+    }
+
+    public static void listTeamStudents(Team team) {
+        if (team.getTeamMembers().isEmpty()) {
+            System.out.println("\nCurrently no students available for " + team.getTeamName());
+        } else {
+            System.out.println("Students for " + team.getTeamName() + ":");
+            Iterator<Student> iterator = team.getTeamMembers().getIterator();
+            while (iterator.hasNext()) {
+                Student student = iterator.next();
+                System.out.println(student);
+            }
+        }
+
+    }
+
+}
