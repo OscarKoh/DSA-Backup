@@ -35,17 +35,17 @@ public class TeamManagementUI {
         ListInterface<Programme> programmeList = ManageProgramme.getProgrammeList();
         ListInterface<Course> courseList = ManageCourse.getCourseList();
         ListInterface<Team> teamList = ManageTutorialTeam.getTeamList();
+        ListInterface<Student> teamMembers = ManageStudentTeam.getTeamMembers();
 
         Scanner scanner = new Scanner(System.in);
-//        
-//        for(int i = 0; i < teamList.size(); i ++){
-//            Team team = teamList.get(i);
-//            System.out.println(team);
-//            for(int j = 0; j < team.getTeamMembers().size(); j++){
-//                System.out.println(team.getTeamMembers().get(j));
+
+//        for(int i = 0; i < teamMembers.size(); i ++){
+//            Student teamMember = teamMembers.get(i);
+//            System.out.println(teamMember.getName() + "\t" + teamMember.getGroup().getGroupId());
+//            for(int j = 0; j < teamMember.getTeamLists().size(); j++){
+//                System.out.println(teamMember.getTeamLists().get(j).getTeamId() + "\t" + teamMember.getTeamLists().get(j).getCourse().getName());
 //            }
 //        }
-
         int choice = 0;
         do {
             choice = displayControls(scanner);
@@ -66,34 +66,7 @@ public class TeamManagementUI {
                 case 1:
                     //Create team 
                     //1. List program and select one
-                    validProgramSelection = false;
-                    while (!validProgramSelection) {
-                        try {
-                            // List all programmes
-                            System.out.println(" ");
-                            for (int i = 0; i < programmeList.size(); i++) {
-                                System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
-                            }
-
-                            // Select the programme
-                            System.out.print("\nEnter the program number to create team: ");
-                            int programPosition = scanner.nextInt();
-                            scanner.nextLine(); // Consume the newline character
-
-                            if (programPosition < 1 || programPosition > programmeList.size()) {
-                                throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
-                            }
-
-                            // Retrieve the selected program
-                            program = programmeList.get(programPosition - 1);
-                            validProgramSelection = true; // Update the flag to exit the loop
-                        } catch (InputMismatchException e) {
-                            System.out.println("\nInvalid input. Please enter a valid number.");
-                            scanner.nextLine(); // Consume the invalid input
-                        } catch (IllegalArgumentException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
+                    program = selectProgram(scanner, programmeList);
 
                     //2. List group of the selected program and select one group
                     groupPosition = readGroupPositionInput(scanner, program);
@@ -114,34 +87,8 @@ public class TeamManagementUI {
                 case 2:
                     //Remove team 
                     //1. List program and select one
-                    validProgramSelection = false;
-                    while (!validProgramSelection) {
-                        // List all programmes
-                        System.out.println(" ");
-                        for (int i = 0; i < programmeList.size(); i++) {
-                            System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
-                        }
+                    program = selectProgram(scanner, programmeList);
 
-                        // Select the programme
-                        int programPosition = -1;
-                        try {
-                            System.out.print("\nEnter the program number to create team: ");
-                            programPosition = scanner.nextInt();
-
-                            if (programPosition < 1 || programPosition > programmeList.size()) {
-                                throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
-                            }
-
-                            // Retrieve the selected program
-                            program = programmeList.get(programPosition - 1);
-                            validProgramSelection = true;
-                        } catch (InputMismatchException e) {
-                            System.out.println("\nInvalid input. Please enter a valid number.");
-                            scanner.nextLine(); // Consume the invalid input
-                        } catch (IllegalArgumentException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
                     //2. List group of the selected program and select one group
                     groupPosition = readGroupPositionInput(scanner, program);
                     if (groupPosition != -1) {
@@ -164,34 +111,8 @@ public class TeamManagementUI {
                     //Amend team details 
 
                     // 1. List program and select one validProgramSelection = false;
-                    validProgramSelection = false;
-                    while (!validProgramSelection) {
-                        // List all programmes
-                        System.out.println(" ");
-                        for (int i = 0; i < programmeList.size(); i++) {
-                            System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
-                        }
+                    program = selectProgram(scanner, programmeList);
 
-                        // Select the programme
-                        int programPosition = -1;
-                        try {
-                            System.out.print("\nEnter the program number to create team: ");
-                            programPosition = scanner.nextInt();
-
-                            if (programPosition < 1 || programPosition > programmeList.size()) {
-                                throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
-                            }
-
-                            // Retrieve the selected program
-                            program = programmeList.get(programPosition - 1);
-                            validProgramSelection = true;
-                        } catch (InputMismatchException e) {
-                            System.out.println("\nInvalid input. Please enter a valid number.");
-                            scanner.nextLine(); // Consume the invalid input
-                        } catch (IllegalArgumentException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
                     //2. List group of the selected program and select one group
                     groupPosition = readGroupPositionInput(scanner, program);
                     if (groupPosition != -1) {
@@ -212,34 +133,8 @@ public class TeamManagementUI {
 
                 case 4:
                     //Add students into team 
-                    validProgramSelection = false;
-                    while (!validProgramSelection) {
-                        // List all programmes
-                        System.out.println(" ");
-                        for (int i = 0; i < programmeList.size(); i++) {
-                            System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
-                        }
+                    program = selectProgram(scanner, programmeList);
 
-                        // Select the programme
-                        int programPosition = -1;
-                        try {
-                            System.out.print("\nEnter the program number to create team: ");
-                            programPosition = scanner.nextInt();
-
-                            if (programPosition < 1 || programPosition > programmeList.size()) {
-                                throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
-                            }
-
-                            // Retrieve the selected program
-                            program = programmeList.get(programPosition - 1);
-                            validProgramSelection = true;
-                        } catch (InputMismatchException e) {
-                            System.out.println("\nInvalid input. Please enter a valid number.");
-                            scanner.nextLine(); // Consume the invalid input
-                        } catch (IllegalArgumentException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
                     //2. List group of the selected program and select one group
                     groupPosition = readGroupPositionInput(scanner, program);
                     if (groupPosition != -1) {
@@ -270,35 +165,7 @@ public class TeamManagementUI {
 
                 case 5:
                     //Remove student 
-
-                    validProgramSelection = false;
-                    while (!validProgramSelection) {
-                        // List all programmes
-                        System.out.println(" ");
-                        for (int i = 0; i < programmeList.size(); i++) {
-                            System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
-                        }
-
-                        // Select the programme
-                        int programPosition = -1;
-                        try {
-                            System.out.print("\nEnter the program number to create team: ");
-                            programPosition = scanner.nextInt();
-
-                            if (programPosition < 1 || programPosition > programmeList.size()) {
-                                throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
-                            }
-
-                            // Retrieve the selected program
-                            program = programmeList.get(programPosition - 1);
-                            validProgramSelection = true;
-                        } catch (InputMismatchException e) {
-                            System.out.println("\nInvalid input. Please enter a valid number.");
-                            scanner.nextLine(); // Consume the invalid input
-                        } catch (IllegalArgumentException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
+                    program = selectProgram(scanner, programmeList);
                     //2. List group of the selected program and select one group
                     groupPosition = readGroupPositionInput(scanner, program);
                     if (groupPosition != -1) {
@@ -323,34 +190,7 @@ public class TeamManagementUI {
 
                 case 6:
                     //Merge Teams 
-                    validProgramSelection = false;
-                    while (!validProgramSelection) {
-                        // List all programmes
-                        System.out.println(" ");
-                        for (int i = 0; i < programmeList.size(); i++) {
-                            System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
-                        }
-
-                        // Select the programme
-                        int programPosition = -1;
-                        try {
-                            System.out.print("\nEnter the program number to create team: ");
-                            programPosition = scanner.nextInt();
-
-                            if (programPosition < 1 || programPosition > programmeList.size()) {
-                                throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
-                            }
-
-                            // Retrieve the selected program
-                            program = programmeList.get(programPosition - 1);
-                            validProgramSelection = true;
-                        } catch (InputMismatchException e) {
-                            System.out.println("\nInvalid input. Please enter a valid number.");
-                            scanner.nextLine(); // Consume the invalid input
-                        } catch (IllegalArgumentException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
+                    program = selectProgram(scanner, programmeList);
                     //2. List group of the selected program and select one group
                     groupPosition = readGroupPositionInput(scanner, program);
                     if (groupPosition != -1) {
@@ -372,34 +212,8 @@ public class TeamManagementUI {
 
                 case 7:
                     //List teams 
-                    validProgramSelection = false;
-                    while (!validProgramSelection) {
-                        // List all programmes
-                        System.out.println(" ");
-                        for (int i = 0; i < programmeList.size(); i++) {
-                            System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
-                        }
+                    program = selectProgram(scanner, programmeList);
 
-                        // Select the programme
-                        int programPosition = -1;
-                        try {
-                            System.out.print("\nEnter the program number to create team: ");
-                            programPosition = scanner.nextInt();
-
-                            if (programPosition < 1 || programPosition > programmeList.size()) {
-                                throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
-                            }
-
-                            // Retrieve the selected program
-                            program = programmeList.get(programPosition - 1);
-                            validProgramSelection = true;
-                        } catch (InputMismatchException e) {
-                            System.out.println("\nInvalid input. Please enter a valid number.");
-                            scanner.nextLine(); // Consume the invalid input
-                        } catch (IllegalArgumentException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
                     //2. List group of the selected program and select one group
                     groupPosition = readGroupPositionInput(scanner, program);
                     if (groupPosition != -1) {
@@ -412,34 +226,8 @@ public class TeamManagementUI {
 
                 case 8:
                     //List students under a team
-                    validProgramSelection = false;
-                    while (!validProgramSelection) {
-                        // List all programmes
-                        System.out.println(" ");
-                        for (int i = 0; i < programmeList.size(); i++) {
-                            System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
-                        }
+                    program = selectProgram(scanner, programmeList);
 
-                        // Select the programme
-                        int programPosition = -1;
-                        try {
-                            System.out.print("\nEnter the program number to create team: ");
-                            programPosition = scanner.nextInt();
-
-                            if (programPosition < 1 || programPosition > programmeList.size()) {
-                                throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
-                            }
-
-                            // Retrieve the selected program
-                            program = programmeList.get(programPosition - 1);
-                            validProgramSelection = true;
-                        } catch (InputMismatchException e) {
-                            System.out.println("\nInvalid input. Please enter a valid number.");
-                            scanner.nextLine(); // Consume the invalid input
-                        } catch (IllegalArgumentException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
                     //2. List group of the selected program and select one group
                     groupPosition = readGroupPositionInput(scanner, program);
                     if (groupPosition != -1) {
@@ -466,7 +254,7 @@ public class TeamManagementUI {
 
                 case 10:
                     TeamSummary2 teamSummary2 = new TeamSummary2();
-                    teamSummary2.displayTeamsSummaryReport(programmeList);
+                    teamSummary2.start();
                     break;
 
                 case 11:
@@ -477,6 +265,41 @@ public class TeamManagementUI {
 
         } while (choice != 11);
 
+    }
+
+    public static Programme selectProgram(Scanner scanner, ListInterface<Programme> programmeList) {
+        boolean validProgramSelection = false;
+        Programme program = null;
+
+        while (!validProgramSelection) {
+            try {
+                // List all programmes
+                System.out.println(" ");
+                for (int i = 0; i < programmeList.size(); i++) {
+                    System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
+                }
+
+                // Select the programme
+                System.out.print("\nEnter the program number to view: ");
+                int programPosition = scanner.nextInt();
+                scanner.nextLine(); // Consume the newline character
+
+                if (programPosition < 1 || programPosition > programmeList.size()) {
+                    throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
+                }
+
+                // Retrieve the selected program
+                program = programmeList.get(programPosition - 1);
+                validProgramSelection = true; // Update the flag to exit the loop
+            } catch (InputMismatchException e) {
+                System.out.println("\nInvalid input. Please enter a valid number.");
+                scanner.nextLine(); // Consume the invalid input
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        return program;
     }
 
     public static ListInterface<Team> getActualTeamList(Course selectedCourse, TutorialGroup group) {
