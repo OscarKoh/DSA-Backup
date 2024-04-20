@@ -1,7 +1,5 @@
 package entity;
 
-//import TeachingAss.Tutor;
-//import entity.Student;
 import adt.ArrayList;
 import adt.ListInterface;
 import java.io.Serializable;
@@ -20,27 +18,31 @@ public class Course implements Serializable {
     private int creditHour;
     private int teamSize;
     private double fee;
-    private ListInterface<Student> studentList = new ArrayList<>();
+    private ListInterface<Student> registerStudentList = new ArrayList<>();
+    //private ListInterface<Tutor> tutorList = new ArrayList<>();
     private ListInterface<TutorialGroup> groupList = new ArrayList<>();
     private ListInterface<Team> teamList = new ArrayList<>();
-    //private ListInterface<Tutor> tutorList = new ArrayList<>();
 
+    public Course(){
+        
+    }
     public Course(String code, String name, ArrayList<CourseType> courseTypes, int creditHour, double fee) {
         this.code = code;
         this.name = name;
         this.creditHour = creditHour;
         this.courseTypes = courseTypes;
         this.fee = fee;
+        teamSize = 0;
     }
-
-    public void setTeamSize(int teamSize) {
+    
+    public void setTeamSize(int teamSize){
         this.teamSize = teamSize;
     }
 
-    public int getTeamSize() {
+    public int getTeamSize(){
         return teamSize;
     }
-
+    
     public double getFee() {
         return fee;
     }
@@ -53,10 +55,6 @@ public class Course implements Serializable {
         return courseTypes;
     }
 
-    public ListInterface<Team> getTeamLists() {
-        return teamList;
-    }
-
     public void setCourseTypes(ArrayList<CourseType> courseTypes) {
         this.courseTypes = courseTypes;
     }
@@ -65,6 +63,10 @@ public class Course implements Serializable {
         LECTURE,
         TUTORIAL,
         PRACTICAL
+    }
+    
+    public ListInterface<Team> getTeamLists(){
+        return teamList;
     }
 
     public ListInterface<Programme> getProgrammesList() {
@@ -75,17 +77,23 @@ public class Course implements Serializable {
         this.programmesList = programmesList;
     }
 
-    public ListInterface<Student> getStudentList() {
-        return studentList;
-    }
-
     public ListInterface<TutorialGroup> getGroupList() {
         return groupList;
     }
 
-    public void setStudentList(ListInterface<Student> studentList) {
-        this.studentList = studentList;
+    public ListInterface<Team> getTeamList() {
+        return teamList;
     }
+
+    public ListInterface<Student> getRegisterStudentList() {
+        return registerStudentList;
+    }
+
+    public void setRegisterStudentList(ListInterface<Student> registerStudentList) {
+        this.registerStudentList = registerStudentList;
+    }
+
+   
 
 //    public ListInterface<Tutor> getTutorList() {
 //        return tutorList;
@@ -94,6 +102,7 @@ public class Course implements Serializable {
 //    public void setTutorList(ListInterface<Tutor> tutorList) {
 //        this.tutorList = tutorList;
 //    }
+
     public String getCode() {
         return code;
     }
