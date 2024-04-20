@@ -17,22 +17,65 @@ public class ManageStudentTeam {
         if (team.getTeamMembers().size() >= team.getCourse().getTeamSize()) {
             System.out.println("Cannot add student. Team has reached maximum size.");
         } else {
-            student.setTeam(team);
+            student.getTeamLists().add(team);
             team.getTeamMembers().add(student); // Add the student to the team's student list
             System.out.println("Student added to the team successfully.");
         }
     }
 
     public static void removeStudentFromTeam(Student student, Team team, int studentPosition) {
-        student.setTeam(null); // Remove the team reference from the student
-        team.getTeamMembers().remove(studentPosition - 1); // Remove the student from the team's student list
+        // Remove team in team list of student object
+        // Students have many teams -> identify which team he is going to be removed
+        ListInterface<Team> teamLists = student.getTeamLists();
+        for (int i = 0; i < teamLists.size(); i++) {
+            Team studentTeam = teamLists.get(i);
+            if (studentTeam.getTeamId().equals(team.getTeamId())) {
+                teamLists.remove(i);
+                i--; // Adjust the index since we removed an element
+            }
+        }
+
+        // Remove student from the team's list of members
+        team.getTeamMembers().remove(studentPosition);
     }
 
+//
+//    public static void removeStudentFromTeam(Student student, Team team, int studentPosition) {
+//        // Remove team in team list of student object
+//        // Students have many teams -> identify which team he is going to be removed
+//        ListInterface<Team> teamLists = student.getTeamLists();
+//        Iterator<Team> iterator = teamLists.getIterator();
+//        while (iterator.hasNext()) {
+//            Team studentTeam = iterator.next();
+//            if (studentTeam.getTeamId().equals(team.getTeamId())) {
+//                iterator.remove(); // Removes the current team from the student's team lists
+//            }
+//        }
+//
+//        // Remove student from the team's list of members
+//        team.getTeamMembers().remove(studentPosition - 1); // Remove the student from the team's student list
+//        System.out.println(student.getName() + " has been removed from the team");
+//    }
+//    public static void removeStudentFromTeam(Student student, Team team, int studentPosition) {
+//        //Remove team in team list of student object
+//        //Students have many teams -> identify which team he is going to be removed 
+//        for (int i = 0; i < student.getTeamLists().size(); i++) {
+//            //If the team in the team list = the team to be removed
+//            if (student.getTeamLists().get(i).getTeamId().equals(team.getTeamId())) {
+//                //removed the team from the student team lists
+//                student.getTeamLists().remove(i);
+//            }
+//        }
+//
+//        //Remove student in student list of team object
+//        team.getTeamMembers().remove(studentPosition - 1); // Remove the student from the team's student list
+//        System.out.println( student.getName() + "has been removed from the team");
+//    }
     public static void listTeamStudents(Team team) {
         if (team.getTeamMembers().isEmpty()) {
-            System.out.println("\nCurrently no students available for " + team.getTeamName());
+            System.out.println("\nCurrently no students available for " + team.getTeamId());
         } else {
-            System.out.println("Students for " + team.getTeamName() + ":");
+            System.out.println("Students for " + team.getTeamId() + ":");
             Iterator<Student> iterator = team.getTeamMembers().getIterator();
             while (iterator.hasNext()) {
                 Student student = iterator.next();
