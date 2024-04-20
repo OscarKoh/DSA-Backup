@@ -6,30 +6,18 @@ package entity;
 
 import adt.ArrayList;
 import adt.ListInterface;
-import entity.Student;
 import java.io.Serializable;
-import java.util.Scanner;
 
 public class Team implements Serializable {
 
     private String teamId;
-    private String teamName;
     private TutorialGroup tutorialGroup;
     private ListInterface<Student> studentLists;
     private Course course;
 
-    public Team(String teamId, String teamName) {
+    public Team(String teamId) {
         this.teamId = teamId;
-        this.teamName = teamName;
         this.studentLists = new ArrayList<>();
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
-
-    public Course getCourse() {
-        return course;
     }
 
     public void setTeamId(String teamId) {
@@ -40,17 +28,12 @@ public class Team implements Serializable {
         return teamId;
     }
 
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
-    public String getTeamName() {
-        return teamName;
-    }
-
-    public void amendTeamDetails(String newTeamId, String newTeamName) {
-        this.teamId = newTeamId;
-        this.teamName = newTeamName;
+    public Course getCourse() {
+        return course;
     }
 
     public void setTutorialGroup(TutorialGroup tutorialGroup) {
@@ -65,8 +48,12 @@ public class Team implements Serializable {
         return studentLists;
     }
 
+    public void amendTeamDetails(String newTeamId) {
+        this.teamId = newTeamId;
+    }
+
     @Override
     public String toString() {
-        return "Team ID: " + teamId + ", Team Name: " + teamName;
+        return "Team ID: " + teamId;
     }
 }
