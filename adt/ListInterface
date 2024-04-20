@@ -1,0 +1,33 @@
+package adt;
+
+import java.util.Iterator;
+
+public interface ListInterface<T> {
+
+    public void add(T newItem);
+
+    public T remove(int index);
+    
+//    public T removeFromBack();
+
+    public void amend(int index, T newItem);
+
+    public int search(T item);
+
+    public Iterator<T> getIterator();
+
+    public void mergeLists(ListInterface<T> anotherSet);
+
+    public boolean isEmpty();
+
+    public int size();
+
+    public T get(int index);
+
+    public void clear();
+
+    public T[] toArray();
+    
+    public void reverse();
+
+}
