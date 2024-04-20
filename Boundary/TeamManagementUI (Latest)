@@ -39,13 +39,6 @@ public class TeamManagementUI {
 
         Scanner scanner = new Scanner(System.in);
 
-//        for(int i = 0; i < teamMembers.size(); i ++){
-//            Student teamMember = teamMembers.get(i);
-//            System.out.println(teamMember.getName() + "\t" + teamMember.getGroup().getGroupId());
-//            for(int j = 0; j < teamMember.getTeamLists().size(); j++){
-//                System.out.println(teamMember.getTeamLists().get(j).getTeamId() + "\t" + teamMember.getTeamLists().get(j).getCourse().getName());
-//            }
-//        }
         int choice = 0;
         do {
             choice = displayControls(scanner);
@@ -662,7 +655,7 @@ public class TeamManagementUI {
             try {
                 choice = scanner.nextInt();
                 if (choice < 1 || choice > 11) {
-                    System.out.println("Invalid choice. Please enter a number between 1 and 10.\n");
+                    System.out.println("Invalid choice. Please enter a number between 1 and 11.\n");
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a valid number.");
