@@ -16,21 +16,42 @@ public class Programme implements Serializable {
     private String programmeCode;
     private String programmeName;
     private String faculty;
+    //private int maxTotalCreditHour;
     private ListInterface<TutorialGroup> groupList = new ArrayList<>();
-    private ListInterface<Course> courseList = new ArrayList<>();
-    private int maxStudents;
+    private ListInterface<Course> courseList = new ArrayList<>(6);
+    private ListInterface<Student> studentList = new ArrayList<>();
+
+    public Programme() {
+
+    }
+
+//    public Programme(String programmeCode, String programmeName, int programmeDurationInMonths, String faculty, int maxTotalCreditHour) {
+//        this.programmeCode = programmeCode;
+//        this.programmeName = programmeName;
+//        this.programmeDurationInMonths = programmeDurationInMonths;
+//        this.faculty = faculty;
+//        this.maxTotalCreditHour = maxTotalCreditHour;
+//    }
 
     public Programme(String programmeCode, String programmeName, int programmeDurationInMonths, String faculty) {
         this.programmeCode = programmeCode;
         this.programmeName = programmeName;
         this.programmeDurationInMonths = programmeDurationInMonths;
         this.faculty = faculty;
-        maxStudents = -1;
+        //this.maxTotalCreditHour = maxTotalCreditHour;
     }
 
     public int getProgrammeDurationInMonths() {
         return programmeDurationInMonths;
     }
+
+//    public int getMaxTotalCreditHour() {
+//        return maxTotalCreditHour;
+//    }
+//
+//    public void setMaxTotalCreditHour(int maxTotalCreditHour) {
+//        this.maxTotalCreditHour = maxTotalCreditHour;
+//    }
 
     public void setProgrammeDurationInMonths(int programmeDurationInMonths) {
         this.programmeDurationInMonths = programmeDurationInMonths;
@@ -82,6 +103,14 @@ public class Programme implements Serializable {
 
     public void setCourseList(ListInterface<Course> courseList) {
         this.courseList = courseList;
+    }
+
+    public ListInterface<Student> getStudentList() {
+        return studentList;
+    }
+
+    public void setStudentList(ListInterface<Student> studentList) {
+        this.studentList = studentList;
     }
 
     public boolean addCourse(Course course) {
@@ -152,15 +181,6 @@ public class Programme implements Serializable {
                 + "Faculty             : %s\n"
                 + "Duration            : %d months\n"
                 + "Total Credit hour   : %d", programmeCode, programmeName, faculty, programmeDurationInMonths, creditHour);
-    }
-
-    public void setMaxStudents(int maxStudents) {
-        this.maxStudents = maxStudents;
-    }
-
-
-    public int getMaxStudents() {
-        return maxStudents;
     }
 
 }
