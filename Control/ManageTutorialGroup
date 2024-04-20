@@ -42,7 +42,6 @@ public class ManageTutorialGroup {
         }
 
         if (!groupExists) {
-            programList.add(program);
             group.setProgramme(program);
             program.getGroupLists().add(group);
             groupList.add(group);
