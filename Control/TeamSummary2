@@ -26,7 +26,6 @@ public class TeamSummary2 {
 
     public void start() {
 
-        DataInitializer.initializeAllData();
         ListInterface<Programme> programmeList = ManageProgramme.getProgrammeList();
         ListInterface<Team> teamList = ManageTutorialTeam.getTeamList();
         ListInterface<Student> memberList = ManageStudentTeam.getTeamMembers();
