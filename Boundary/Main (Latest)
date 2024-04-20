@@ -16,7 +16,7 @@ public class Main {
             System.out.println("Choose an option:");
             System.out.println("1. Course Management System");
             System.out.println("2. Student Registration System");
-            System.out.println("2. Assignment Team Management System");
+            System.out.println("5. Assignment Team Management System");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
