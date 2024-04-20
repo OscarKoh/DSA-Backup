@@ -8,6 +8,7 @@ package control;
  *
  * @author OSCAR KOH YUNG QIN
  */
+import Boundary.TeamManagementUI;
 import static Boundary.TeamManagementUI.getActualTeamList;
 import static Boundary.TeamManagementUI.readGroupPositionInput;
 import adt.ArrayList;
@@ -34,7 +35,7 @@ public class TeamSummary1 {
         ListInterface<Programme> programmeList = ManageProgramme.getProgrammeList();
 
         Scanner scanner = new Scanner(System.in);
-        Programme program = selectProgram(scanner, programmeList);
+        Programme program = TeamManagementUI.selectProgram(scanner, programmeList);
         System.out.println("Will you like to view group with no teams? (yes/ no): ");
         String ans = scanner.nextLine();
 
@@ -48,7 +49,7 @@ public class TeamSummary1 {
         ListInterface<Team> actualTeamList = new ArrayList<>();
         int counter = 0;
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < program.getGroupLists().size(); i++) {
             TutorialGroup group = program.getGroupLists().get(i);
             boolean hasTeams = !group.getTeamLists().isEmpty();
             if ("NO".equalsIgnoreCase(ans) && !hasTeams) {
@@ -75,7 +76,7 @@ public class TeamSummary1 {
 
         System.out.println("\nCourse with highest team size: " + getHighestTeamSize(program).getName() + "(" + getHighestTeamSize(program).getTeamSize() + ")");
         System.out.println("Course with lowest team size: " + getLowestTeamSize(program).getName() + "(" + getLowestTeamSize(program).getTeamSize() + ")\n");
-        
+
         highestTeamInCourse(program);
 
     }
@@ -89,20 +90,20 @@ public class TeamSummary1 {
             Course course = program.getCourseList().get(i);
             for (int j = 0; j < program.getGroupLists().size(); j++) {
                 TutorialGroup group = program.getGroupLists().get(j);
-                for(int k = 0; k < group.getTeamLists().size(); k++){
+                for (int k = 0; k < group.getTeamLists().size(); k++) {
                     //If the team have the same course 
-                    if(group.getTeamLists().get(k).getCourse().equals(course)){
-                        teamNum ++;
+                    if (group.getTeamLists().get(k).getCourse().equals(course)) {
+                        teamNum++;
                     }
                 }
-                
+
                 if (teamNum > highestTeamNum) {
                     highestTeamNum = teamNum;
                     highestGroup = group;
                 }
             }
-            
-            System.out.println("Group with highest number of team in " + course.getName() + " : " + highestGroup.getGroupId() + "(" + highestTeamNum+ ")");
+
+            System.out.println("Group with highest number of team in " + course.getName() + " : " + highestGroup.getGroupId() + "(" + highestTeamNum + ")");
             highestTeamNum = -1;
             highestGroup = null;
             teamNum = 0;
@@ -154,41 +155,6 @@ public class TeamSummary1 {
     private void reportDetails(Programme program, TutorialGroup group) {
         System.out.println("Programme: " + program.getProgrammeName());
         System.out.println("Tutorial Group: " + group.getGroupId());
-    }
-
-    private Programme selectProgram(Scanner scanner, ListInterface<Programme> programmeList) {
-        boolean validProgramSelection = false;
-        Programme program = null;
-
-        while (!validProgramSelection) {
-            try {
-                // List all programmes
-                System.out.println(" ");
-                for (int i = 0; i < programmeList.size(); i++) {
-                    System.out.println((i + 1) + ". " + programmeList.get(i).getProgrammeName());
-                }
-
-                // Select the programme
-                System.out.print("\nEnter the program number to view: ");
-                int programPosition = scanner.nextInt();
-                scanner.nextLine(); // Consume the newline character
-
-                if (programPosition < 1 || programPosition > programmeList.size()) {
-                    throw new IllegalArgumentException("\nInvalid program number. Please enter a number between 1 and " + programmeList.size() + ".");
-                }
-
-                // Retrieve the selected program
-                program = programmeList.get(programPosition - 1);
-                validProgramSelection = true; // Update the flag to exit the loop
-            } catch (InputMismatchException e) {
-                System.out.println("\nInvalid input. Please enter a valid number.");
-                scanner.nextLine(); // Consume the invalid input
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        return program;
     }
 
     private void displaySummaryReport(Programme program) {
