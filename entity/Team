@@ -7,6 +7,7 @@ package entity;
 import adt.ArrayList;
 import adt.ListInterface;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Team implements Serializable {
 
@@ -50,6 +51,27 @@ public class Team implements Serializable {
 
     public void amendTeamDetails(String newTeamId) {
         this.teamId = newTeamId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Team team = (Team) o;
+        return Objects.equals(teamId, team.teamId);
+    }
+
+    public int compareTo(Team otherTeam) {
+        return this.teamId.compareTo(otherTeam.teamId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(teamId);
     }
 
     @Override
