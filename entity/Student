@@ -7,8 +7,7 @@ package entity;
 import adt.ListInterface;
 import adt.ArrayList;
 import java.io.Serializable;
-import entity.Course;
-import entity.Team;
+import java.util.Objects;
 
 /**
  *
@@ -19,33 +18,32 @@ public class Student implements Serializable {
     private int studentID;
     private String name;
     private String IC;
-    private String email;
     private String contact_number;
-    private Programme program;
-    private TutorialGroup tutorialGroup;
-    private Team team;
-    private String status;
-    private double bill;
-//    private ListInterface<Programme> programmesList = new Entity.ArrayList<>();
+    private String programme;
+    private TutorialGroup group;
     private ListInterface<Course> courses = new ArrayList<>();
-    private ListInterface<Team> teamLists = new ArrayList<>();
+    private ListInterface<RegisteredCourse> registeredCourses;
+    private ListInterface<Team> teamList;
 
     public Student() {
     }
 
-    public Student(int studentID, String name, String IC, String email, String contact_number, String status, double bill) {
+    public Student(int studentID, String name, String IC, String contact_number, String programme) {
         this.studentID = studentID;
         this.name = name;
         this.IC = IC;
-        this.email = email;
         this.contact_number = contact_number;
-//        this.program = program;
-        this.status = status;
-        this.bill = bill;
+        this.programme = programme;
+        this.registeredCourses = new ArrayList<>();
+        this.teamList = new ArrayList<>();
     }
 
-    public ListInterface<Team> getTeamLists() {
-        return teamLists;
+    public String getProgramme() {
+        return programme;
+    }
+
+    public void setProgramme(String programme) {
+        this.programme = programme;
     }
 
     public ListInterface<Course> getCourses() {
@@ -56,6 +54,26 @@ public class Student implements Serializable {
         this.courses = courses;
     }
 
+    public ListInterface<RegisteredCourse> getRegisteredCourses() {
+        return registeredCourses;
+    }
+
+    public void setRegisteredCourses(ListInterface<RegisteredCourse> registeredCourses) {
+        this.registeredCourses = registeredCourses;
+    }
+
+    public ListInterface<Team> getTeamLists() {
+        return teamList;
+    }
+    
+    public void setGroup(TutorialGroup group){
+        this.group = group;
+    }
+
+    public TutorialGroup getGroup() {
+        return group;
+    }
+
     public String getIC() {
         return IC;
     }
@@ -64,13 +82,6 @@ public class Student implements Serializable {
         this.IC = IC;
     }
 
-//    public ListInterface<Programme> getProgrammesList() {
-//        return programmesList;
-//    }
-//
-//    public void setProgrammesList(ListInterface<Programme> programmesList) {
-//        this.programmesList = programmesList;
-//    }
     public int getStudentID() {
         return studentID;
     }
@@ -79,23 +90,8 @@ public class Student implements Serializable {
         return name;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public String getContact_number() {
         return contact_number;
-    }
-
-//    public String getStuProgram() {
-//        return program;
-//    }
-    public String getStatus() {
-        return status;
-    }
-
-    public double getBill() {
-        return bill;
     }
 
     public void setStudentID(int studentID) {
@@ -106,52 +102,37 @@ public class Student implements Serializable {
         this.name = name;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public void setContact_number(String contact_number) {
         this.contact_number = contact_number;
     }
+    
+    
 
-//    public void setprogram(String program) {
-//        this.program = program;
-//    }
-    public void setStatus(String status) {
-        this.status = status;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Student other = (Student) obj;
+        return this.studentID == other.studentID;
     }
 
-    public void setBill(double bill) {
-        this.bill = bill;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setProgram(Programme program) {
-        this.program = program;
-    }
-
-    public Programme getProgram() {
-        return program;
-    }
-
-    public void setGroup(TutorialGroup group) {
-        this.tutorialGroup = group;
-    }
-
-    public TutorialGroup getGroup() {
-        return tutorialGroup;
+    @Override
+    public int hashCode() {
+        // Calculating the hash code based on all fields
+        int result = studentID;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (IC != null ? IC.hashCode() : 0);
+        result = 31 * result + (contact_number != null ? contact_number.hashCode() : 0);
+        result = 31 * result + (programme != null ? programme.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
-        return String.format("  %-10s %-30s %-15s %-20s %-13s %-9s %-5s", studentID, name, IC, email, contact_number, status, bill);
+        return String.format("  %-10s %-30s %-15s %-13s %-30s", studentID, name, IC, contact_number, programme);
     }
-
 }
